@@ -20,6 +20,9 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "authority")
+    private String authority;
+
     // Relationships, other fields, getters, and setters
     public String getEmail() {
         return email;
@@ -27,6 +30,10 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getAuthority() {
+        return authority;
     }
 
     public Long getUserId() {
@@ -59,6 +66,10 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 
 }
