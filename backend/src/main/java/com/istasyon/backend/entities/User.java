@@ -20,8 +20,12 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "authority")
-    private String authority;
+    @Column(name = "status")
+    private String status = "ACTIVE";
+
+    //Email verification check
+    @Column(name = "is_verified")
+    private Boolean isVerified = false;
 
     // Relationships, other fields, getters, and setters
     public String getEmail() {
@@ -32,9 +36,6 @@ public class User {
         return password;
     }
 
-    public String getAuthority() {
-        return authority;
-    }
 
     public Long getUserId() {
         return id;
@@ -68,8 +69,5 @@ public class User {
         this.password = password;
     }
 
-    public void setAuthority(String authority) {
-        this.authority = authority;
-    }
 
 }

@@ -10,7 +10,7 @@ public class Company {
 
     @Id
     @Column(length = 10)
-    private String cUserNo;
+    private Long cUserNo;
 
     @Column(length = 10, unique = true)
     private String taxNo;
@@ -33,6 +33,7 @@ public class Company {
     private LocalDateTime confirmationTime;
 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "cUserNo", referencedColumnName = "id", insertable = false, updatable = false)
     private User user;
 

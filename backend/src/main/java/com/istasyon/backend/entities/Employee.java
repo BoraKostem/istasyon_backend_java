@@ -10,8 +10,7 @@ import java.time.LocalDateTime;
 public class Employee {
 
     @Id
-    @Column(length = 10)
-    private String eUserNo;
+    private Long eUserNo;
 
     @Column(nullable = false)
     private Integer idNo;
@@ -44,6 +43,7 @@ public class Employee {
     private String infoText;
 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "eUserNo", referencedColumnName = "id", insertable = false, updatable = false)
     private User user;
 
