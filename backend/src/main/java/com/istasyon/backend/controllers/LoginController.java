@@ -1,5 +1,6 @@
 package com.istasyon.backend.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.istasyon.backend.dataObjects.UserDTO;
 import com.istasyon.backend.entities.User;
 import com.istasyon.backend.repositories.UserRepo;
@@ -31,13 +32,13 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<CustomJson<String>> login(HttpServletRequest request) {
+    public ResponseEntity<CustomJson<Object>> login(HttpServletRequest request) {
         String data = "Login successful";
         return jsonCreator.create(data);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<CustomJson<String>> login(@ModelAttribute UserDTO userDTO, HttpServletResponse response) {
+    public ResponseEntity<CustomJson<Object>> login(@ModelAttribute UserDTO userDTO, HttpServletResponse response) {
         try {
             if (userDTO.getEmail() == null || userDTO.getPassword() == null) {
                 return jsonCreator.create("Email and password must be provided", 400);
@@ -47,7 +48,7 @@ public class LoginController {
                 Cookie cookie = tokenUtil.encodeCookie(userInDb);
                 response.addCookie(cookie);
 
-                return jsonCreator.create("Login successful");
+                return jsonCreator.create(userInDb);
             } else {
                 return jsonCreator.create("Invalid email or password", 403);
             }

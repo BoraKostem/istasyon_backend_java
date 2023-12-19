@@ -5,11 +5,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JsonCreator {
-    public ResponseEntity<CustomJson<String>> create(String message, int... responseCode) {
+
+    public ResponseEntity<CustomJson<Object>> create(Object object, int... responseCode) {
         if(responseCode.length == 0) {
-            return ResponseEntity.ok(new CustomJson<>(message));
+            return ResponseEntity.ok(new CustomJson<>(object));
         } else {
-            return ResponseEntity.status(responseCode[0]).body(new CustomJson<>(message, responseCode[0]));
+            return ResponseEntity.status(responseCode[0]).body(new CustomJson<>(object, responseCode[0]));
         }
     }
 }

@@ -28,7 +28,7 @@ public class RegisterController {
     }
 
     @PostMapping("/user/register")
-    public ResponseEntity<CustomJson<String>> register(@ModelAttribute UserDTO userDTO, @ModelAttribute EmployeeDTO employeeDTO) {
+    public ResponseEntity<CustomJson<Object>> register(@ModelAttribute UserDTO userDTO, @ModelAttribute EmployeeDTO employeeDTO) {
         try {
             User user = new User();
             user.setName(userDTO.getName());

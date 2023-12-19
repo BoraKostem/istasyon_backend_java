@@ -1,4 +1,6 @@
 package com.istasyon.backend.entities;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -32,6 +34,7 @@ public class User {
         return email;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -47,6 +50,10 @@ public class User {
 
     public String getSurname() {
         return surname;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public void setEmail(String email) {
@@ -69,5 +76,11 @@ public class User {
         this.password = password;
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+                "[id=%d, name='%s', surname='%s', email='%s', status='%s']",
+                id, name, surname, email, status);
+    }
 
 }
