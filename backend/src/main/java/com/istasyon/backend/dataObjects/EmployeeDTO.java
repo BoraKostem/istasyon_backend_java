@@ -1,69 +1,21 @@
-package com.istasyon.backend.entities;
-
-import jakarta.persistence.*;
+package com.istasyon.backend.dataObjects;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "Employee")
-public class Employee {
-
-    @Id
-    private Long eUserNo;
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idNo;
-
-    @Column(length = 20)
+public class EmployeeDTO {
     private String phoneNo;
-
-    @Column(length = 200)
     private String address;
-
-    private Double xCoor;
-    private Double yCoor;
-
-    @Column(length = 6)
-    private String confirmationCode;
-
-    private LocalDateTime confirmationTime;
-
-    @Column(length = 1)
+    //private Double xCoor;
+    //private Double yCoor;
+    //private String confirmationCode;
+    //private LocalDateTime confirmationTime;
     private String gender;
-
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
-
-    @Column(length = 10)
     private String militaryServiceInfo;
-
-    private Boolean driversLicence;
-
-    @Column(length = 200)
+    //private Boolean driversLicence;
     private String infoText;
-
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "eUserNo", referencedColumnName = "id", insertable = false, updatable = false)
-    private User user;
-
-    // Getters and setters...
-
-    public Long getEUserNo() {
-        return eUserNo;
-    }
-
-    public void setEUserNo(Long eUserNo) {
-        this.eUserNo = eUserNo;
-    }
-
-    public Integer getIdNo() {
-        return idNo;
-    }
-
-    public void setIdNo(Integer idNo) {
-        this.idNo = idNo;
-    }
 
     public String getPhoneNo() {
         return phoneNo;
@@ -80,7 +32,7 @@ public class Employee {
     public void setAddress(String address) {
         this.address = address;
     }
-
+    /*
     public Double getxCoor() {
         return xCoor;
     }
@@ -113,6 +65,15 @@ public class Employee {
         this.confirmationTime = confirmationTime;
     }
 
+    public Boolean getDriversLicence() {
+        return driversLicence;
+    }
+
+    public void setDriversLicence(Boolean driversLicence) {
+        this.driversLicence = driversLicence;
+    }
+    */
+
     public String getGender() {
         return gender;
     }
@@ -137,27 +98,11 @@ public class Employee {
         this.militaryServiceInfo = militaryServiceInfo;
     }
 
-    public Boolean getDriversLicence() {
-        return driversLicence;
-    }
-
-    public void setDriversLicence(Boolean driversLicence) {
-        this.driversLicence = driversLicence;
-    }
-
     public String getInfoText() {
         return infoText;
     }
 
     public void setInfoText(String infoText) {
         this.infoText = infoText;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }
