@@ -1,19 +1,17 @@
 package com.istasyon.backend.controllers;
 
-import com.istasyon.backend.dataObjects.EmployeeDTO;
-import com.istasyon.backend.dataObjects.UserDTO;
-import com.istasyon.backend.entities.Employee;
-import com.istasyon.backend.entities.User;
+import com.istasyon.backend.dataObjects.*;
+import com.istasyon.backend.dataObjects.requests.RegisterRequestDTO;
+import com.istasyon.backend.entities.*;
 import com.istasyon.backend.repositories.EmployeeRepo;
 import com.istasyon.backend.repositories.UserRepo;
 import com.istasyon.backend.utilities.CustomJson;
 import com.istasyon.backend.utilities.JsonCreator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin("*")
 @RestController
 public class RegisterController {
     private final UserRepo userRepository;
@@ -29,23 +27,20 @@ public class RegisterController {
 
     @PostMapping("/user/register")
     public ResponseEntity<CustomJson<Object>> register(@ModelAttribute UserDTO userDTO, @ModelAttribute EmployeeDTO employeeDTO) {
-        try {
-            User user = new User();
-            user.setName(userDTO.getName());
-            user.setSurname(userDTO.getSurname());
-            user.setEmail(userDTO.getEmail());
-            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
-            user = userRepository.saveAndFlush(user);
+        return this.createEmployee(userDTO, employeeDTO);
+    }
 
-            Employee employee = getEmployee(employeeDTO, user);
+    @PostMapping("/user/register/v2")
+    public ResponseEntity<CustomJson<Object>> registerJson(@RequestBody RegisterRequestDTO registerRequestDTO) {
+        UserDTO userDTO = registerRequestDTO.User;
+        EmployeeDTO employeeDTO = registerRequestDTO.Employee;
 
-
-            employeeRepository.save(employee);
-            return jsonCreator.create("Registration successful");
-        } catch (Exception e) {
-            return jsonCreator.create("Error during registration: " + e, 500);
+        if(userDTO==null || employeeDTO==null){
+            return  jsonCreator.create("Missing Information",500);
         }
+
+        return this.createEmployee(userDTO, employeeDTO);
     }
 
     private Employee getEmployee(EmployeeDTO employeeDTO, User user) {
@@ -65,5 +60,25 @@ public class RegisterController {
         //employee.setDriversLicence(employeeDTO.getDriversLicence());
         employee.setInfoText(employeeDTO.getInfoText());
         return employee;
+    }
+
+    private ResponseEntity<CustomJson<Object>> createEmployee(UserDTO userDTO, EmployeeDTO employeeDTO){
+        try {
+            User user = new User();
+            user.setName(userDTO.getName());
+            user.setSurname(userDTO.getSurname());
+            user.setEmail(userDTO.getEmail());
+            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+            user = userRepository.saveAndFlush(user);
+
+            Employee employee = getEmployee(employeeDTO, user);
+
+
+            employeeRepository.save(employee);
+            return jsonCreator.create("Registration successful");
+        } catch (Exception e) {
+            return jsonCreator.create("Error during registration: " + e, 500);
+        }
     }
 }

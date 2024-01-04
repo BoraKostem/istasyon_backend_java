@@ -33,7 +33,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(antMatcher(HttpMethod.POST,"/login"),antMatcher(HttpMethod.POST,"/user/register"),antMatcher("/404"),antMatcher("/login")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.POST,"/login"),antMatcher(HttpMethod.POST,"/user/register"),antMatcher("/user/register/v2"),antMatcher("/404"),antMatcher("/login")).permitAll()
                         .anyRequest().authenticated()
                 );
 
@@ -50,7 +50,7 @@ public class SecurityConfig {
                 new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

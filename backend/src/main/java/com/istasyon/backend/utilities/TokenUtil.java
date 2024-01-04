@@ -56,7 +56,10 @@ public class TokenUtil {
         Cookie cookie = new Cookie(cookieName,token);
         cookie.setMaxAge(3*60*60);
 //        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
+        //cookie.setHttpOnly(true);
+        //cookie.setDomain("localhost");
+        //cookie.setPath("/");
+        //cookie.setAttribute("SameSite","None");
 
         return cookie;
     }

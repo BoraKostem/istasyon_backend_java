@@ -76,6 +76,8 @@ public class User {
         this.password = password;
     }
 
+    public void setIsVerified(Boolean status) {this.isVerified= status;}
+
     @Override
     public String toString() {
         return String.format(
