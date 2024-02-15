@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_COMPANY')")
 public class JobAddsController {
     private final JobAddRepo jobAddRepo;
     private final JsonCreator jsonCreator;
@@ -30,7 +31,6 @@ public class JobAddsController {
     }
 
     @PostMapping("/company/jobAdd/create")
-    @PreAuthorize("hasRole('ROLE_COMPANY')")
     public ResponseEntity<CustomJson<Object>> createJobAdd(@ModelAttribute JobAddDTO jobAddDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();

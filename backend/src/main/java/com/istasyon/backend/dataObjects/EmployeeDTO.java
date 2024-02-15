@@ -13,7 +13,7 @@ public class EmployeeDTO {
     private String gender;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
-    private String militaryServiceInfo;
+    private String militaryServiceInfo = "NULL";
     private Boolean driversLicence = false;
     private String infoText;
     public String getPhoneNo() {
