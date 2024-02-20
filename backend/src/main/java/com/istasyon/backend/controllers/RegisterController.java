@@ -5,8 +5,10 @@ import com.istasyon.backend.dataObjects.EmployeeDTO;
 import com.istasyon.backend.dataObjects.UserDTO;
 import com.istasyon.backend.entities.Company;
 import com.istasyon.backend.entities.Employee;
+import com.istasyon.backend.entities.EmployeeProfile;
 import com.istasyon.backend.entities.User;
 import com.istasyon.backend.repositories.CompanyRepo;
+import com.istasyon.backend.repositories.EmployeeProfileRepo;
 import com.istasyon.backend.repositories.EmployeeRepo;
 import com.istasyon.backend.repositories.UserRepo;
 import com.istasyon.backend.utilities.CustomJson;
@@ -23,15 +25,17 @@ import java.util.HashMap;
 public class RegisterController {
     private final UserRepo userRepository;
     private final EmployeeRepo employeeRepository;
+    private final EmployeeProfileRepo employeeProfileRepo;
     private final CompanyRepo companyRepository;
     private final JsonCreator jsonCreator;
     private final BCryptPasswordEncoder passwordEncoder;
-    public RegisterController(UserRepo userRepository, EmployeeRepo employeeRepository, CompanyRepo companyRepository, JsonCreator jsonCreator, BCryptPasswordEncoder passwordEncoder) {
+    public RegisterController(UserRepo userRepository, EmployeeRepo employeeRepository, EmployeeProfileRepo employeeProfileRepo, CompanyRepo companyRepository, JsonCreator jsonCreator, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
         this.companyRepository = companyRepository;
         this.jsonCreator = jsonCreator;
         this.passwordEncoder = passwordEncoder;
+        this.employeeProfileRepo = employeeProfileRepo;
     }
 
     @PostMapping("/user/register")
@@ -44,12 +48,12 @@ public class RegisterController {
             user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
             user = userRepository.saveAndFlush(user);
-
             Employee employee = getEmployee(employeeDTO, user);
-
-
             try {
-                employeeRepository.save(employee);
+                employeeRepository.saveAndFlush(employee);
+                EmployeeProfile empProfile = new EmployeeProfile();
+                empProfile.setEmployee(employee);
+                employeeProfileRepo.save(empProfile);
             } catch (Exception e) {
                 userRepository.delete(user);
                 return jsonCreator.create("Error during registration: " + e, 500);
