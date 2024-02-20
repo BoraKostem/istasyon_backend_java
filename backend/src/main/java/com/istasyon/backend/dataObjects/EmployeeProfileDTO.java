@@ -1,29 +1,30 @@
 package com.istasyon.backend.dataObjects;
 
 import com.istasyon.backend.entities.Employee;
+import org.springframework.web.multipart.MultipartFile;
 
 public class EmployeeProfileDTO {
-    private String profilePhotoUrl;
-    private String backgroundPhotoUrl;
-    private String aboutMe;
-    private String jobTitle;
-    private String department;
-    private String resumeUrl;
+    private MultipartFile profilePhoto = null;
+    private MultipartFile backgroundPhoto = null;
+    private String aboutMe = null;
+    private String jobTitle = null;
+    private String department = null;
+    private MultipartFile resume = null;
 
-    public String getProfilePhotoUrl() {
-        return profilePhotoUrl;
+    public MultipartFile getProfilePhoto() {
+        return profilePhoto;
     }
 
-    public void setProfilePhotoUrl(String profilePhotoUrl) {
-        this.profilePhotoUrl = profilePhotoUrl;
+    public void setProfilePhoto(MultipartFile profilePhoto) {
+        this.profilePhoto = profilePhoto;
     }
 
-    public String getBackgroundPhotoUrl() {
-        return backgroundPhotoUrl;
+    public MultipartFile getBackgroundPhoto() {
+        return backgroundPhoto;
     }
 
-    public void setBackgroundPhotoUrl(String backgroundPhotoUrl) {
-        this.backgroundPhotoUrl = backgroundPhotoUrl;
+    public void setBackgroundPhoto(MultipartFile backgroundPhoto) {
+        this.backgroundPhoto = backgroundPhoto;
     }
 
     public String getAboutMe() {
@@ -50,11 +51,11 @@ public class EmployeeProfileDTO {
         this.department = department;
     }
 
-    public String getResumeUrl() {
-        return resumeUrl;
+    public MultipartFile getResume() {
+        return resume;
     }
 
-    public void setResumeUrl(String resumeUrl) {
-        this.resumeUrl = resumeUrl;
+    public void setResume(MultipartFile resume) {
+        this.resume = resume;
     }
 }
