@@ -31,6 +31,18 @@ public class ProfileController {
         this.awss3Service = awss3Service;
     }
 
+    /**
+     * This method is responsible for editing the profile of the currently authenticated user.
+     * It first retrieves the current authenticated user and finds the associated employee profile.
+     * Then, it updates the employee profile with the details provided in the EmployeeProfileDTO.
+     * If the DTO contains a profile photo, background photo, or resume, it uploads these files to the AWS S3 service and updates the corresponding URLs in the employee profile.
+     * If an exception occurs during the upload of these files or the saving of the employee profile, it returns a response with a 500 status code and a failure message.
+     * If the editing is successful, it returns a response with a 200 status code and a success message.
+     *
+     * @param employeeProfileDTO The data transfer object containing the details of the employee profile to be edited.
+     * @return A ResponseEntity containing a CustomJson object. The object contains a message indicating the result of the operation and, in case of success, the details of the edited profile.
+     * @throws Exception If an error occurs during the editing of the employee profile.
+     */
     @PostMapping("/edit")
     public ResponseEntity<CustomJson<Object>> editProfile(@ModelAttribute EmployeeProfileDTO employeeProfileDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -105,6 +117,15 @@ public class ProfileController {
         return jsonCreator.create(response, 200);
     }
 
+    /**
+     * This method is responsible for retrieving the profile of the currently authenticated user.
+     * It first retrieves the current authenticated user and finds the associated employee profile.
+     * If an exception occurs during the retrieval, it returns a response with a 500 status code and a failure message.
+     * If the retrieval is successful, it returns a response with a 200 status code and the retrieved employee profile.
+     *
+     * @return A ResponseEntity containing a CustomJson object. The object contains the retrieved employee profile or a message indicating the result of the operation in case of failure.
+     * @throws Exception If an error occurs during the retrieval of the employee profile.
+     */
     @GetMapping("")
     public ResponseEntity<CustomJson<Object>> getProfile() {
         EmployeeProfile employeeProfile;
@@ -117,7 +138,5 @@ public class ProfileController {
         }
         return jsonCreator.create(employeeProfile, 200);
     }
-
-    //Todo: Add a method to convert image to AWS S3 URL
 
 }
