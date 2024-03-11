@@ -16,5 +16,19 @@ public class EmpSpeaks {
     @JoinColumn(name = "eUserNo")
     private Employee employee;
 
-    // Getters and setters...
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
 }

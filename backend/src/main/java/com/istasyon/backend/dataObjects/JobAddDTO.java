@@ -13,11 +13,9 @@ public class JobAddDTO {
     private LocalDate publishDate = LocalDate.now();
     private Integer estimatedSalary;
     private Currency currency = Currency.TL;
-    private String workDays;
+    private int workDays;
     private Double workHours;
     private Transportation transportation = Transportation.NULL;
-    private Integer ageMin = -1;
-    private Integer ageMax = -1;
     private String gender = "";
 
     private Status status = Status.ACTIVE;
@@ -59,11 +57,11 @@ public class JobAddDTO {
     public void setCurrency(Currency currency) {
         this.currency = currency;
     }
-    public String getWorkDays() {
+    public int getWorkDays() {
         return workDays;
     }
 
-    public void setWorkDays(String workDays) {
+    public void setWorkDays(int workDays) {
         this.workDays = workDays;
     }
 
@@ -81,22 +79,6 @@ public class JobAddDTO {
 
     public void setTransportation(Transportation transportation) {
         this.transportation = transportation;
-    }
-
-    public Integer getAgeMin() {
-        return ageMin;
-    }
-
-    public void setAgeMin(Integer ageMin) {
-        this.ageMin = ageMin;
-    }
-
-    public Integer getAgeMax() {
-        return ageMax;
-    }
-
-    public void setAgeMax(Integer ageMax) {
-        this.ageMax = ageMax;
     }
 
     public String getGender() {

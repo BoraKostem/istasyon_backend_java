@@ -46,7 +46,7 @@ public class JobApplicationController {
      * @throws Exception If an error occurs during the creation of the application.
      */
     @PostMapping("/apply")
-    public ResponseEntity<CustomJson<Object>> applyForJob(@ModelAttribute ApplicationDTO applicationDTO) {
+    public ResponseEntity<CustomJson<Object>> applyForJob(@RequestBody ApplicationDTO applicationDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         HashMap<String, Object> response = new HashMap<>();
@@ -95,5 +95,46 @@ public class JobApplicationController {
         application.setLike_col(applicationDTO.getLikeOffer());
         application.setDecision(applicationDTO.getDecision());
         return application;
+    }
+
+    @GetMapping("/isQualified")
+    public ResponseEntity<CustomJson<Object>> isQualified(@RequestParam long postId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        HashMap<String, Object> response = new HashMap<>();
+        CompPostsAds jobAdd = jobAddRepo.findByadId(postId);
+        if(jobAdd == null || jobAdd.getStatus() != ACTIVE) {
+            response.put("Message", "Job advertisement not found");
+            return jsonCreator.create(response, 404);
+        }
+        /*
+        if(jobAdd.getQualification() == null || jobAdd.getQualification().isEmpty()) {
+            response.put("Message", "No qualification required");
+            return jsonCreator.create(response, 200);
+        }
+        Employee employee = employeeRepo.findByeUserNo(currentUser.getUserId());
+        if(employee.getQualification() == null || employee.getQualification().isEmpty()) {
+            response.put("Message", "You are not qualified for this job");
+            return jsonCreator.create(response, 200);
+        }
+        String[] jobQualifications = jobAdd.getQualification().split(",");
+        String[] employeeQualifications = employee.getQualification().split(",");
+        for(String jobQualification : jobQualifications) {
+            boolean found = false;
+            for(String employeeQualification : employeeQualifications) {
+                if(jobQualification.equals(employeeQualification)) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found) {
+                response.put("Message", "You are not qualified for this job");
+                return jsonCreator.create(response, 200);
+            }
+        }
+
+         */
+        response.put("Message", "You are qualified for this job");
+        return jsonCreator.create(response, 200);
     }
 }

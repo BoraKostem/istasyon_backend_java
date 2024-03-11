@@ -39,12 +39,15 @@ public class Employee {
 
     private Boolean driversLicence;
 
-    @Column(length = 200)
-    private String infoText;
+    @Column(name = "edu_lvl", columnDefinition = "TEXT")
+    private String eduLvl;
+
+    @Column(name = "salary_expectation", columnDefinition = "TEXT")
+    private String salaryExpectation;
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "eUserNo", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "eUserNo", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User user;
 
     // Getters and setters...
@@ -145,12 +148,20 @@ public class Employee {
         this.driversLicence = driversLicence;
     }
 
-    public String getInfoText() {
-        return infoText;
+    public String getEduLvl() {
+        return eduLvl;
     }
 
-    public void setInfoText(String infoText) {
-        this.infoText = infoText;
+    public void setEduLvl(String eduLvl) {
+        this.eduLvl = eduLvl;
+    }
+
+    public String getSalaryExpectation() {
+        return salaryExpectation;
+    }
+
+    public void setSalaryExpectation(String salaryExpectation) {
+        this.salaryExpectation = salaryExpectation;
     }
 
     public User getUser() {

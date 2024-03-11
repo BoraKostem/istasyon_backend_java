@@ -1,7 +1,7 @@
 package com.istasyon.backend.controllers;
 
-import com.istasyon.backend.dataObjects.CompanyDTO;
-import com.istasyon.backend.dataObjects.EmployeeDTO;
+import com.istasyon.backend.dataObjects.CompanyRegisterDTO;
+import com.istasyon.backend.dataObjects.RegisterDTO;
 import com.istasyon.backend.dataObjects.UserDTO;
 import com.istasyon.backend.entities.Company;
 import com.istasyon.backend.entities.Employee;
@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -39,16 +40,16 @@ public class RegisterController {
     }
 
     @PostMapping("/user/register")
-    public ResponseEntity<CustomJson<Object>> register(@ModelAttribute UserDTO userDTO, @ModelAttribute EmployeeDTO employeeDTO) {
+    public ResponseEntity<CustomJson<Object>> register(@RequestBody RegisterDTO registerDTO) {
         try {
             User user = new User();
-            user.setName(userDTO.getName());
-            user.setSurname(userDTO.getSurname());
-            user.setEmail(userDTO.getEmail());
-            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            user.setName(registerDTO.getName());
+            user.setSurname(registerDTO.getSurname());
+            user.setEmail(registerDTO.getEmail());
+            user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
 
             user = userRepository.saveAndFlush(user);
-            Employee employee = getEmployee(employeeDTO, user);
+            Employee employee = getEmployee(registerDTO, user);
             try {
                 employeeRepository.saveAndFlush(employee);
                 EmployeeProfile empProfile = new EmployeeProfile();
@@ -67,7 +68,7 @@ public class RegisterController {
         }
     }
 
-    private Employee getEmployee(EmployeeDTO employeeDTO, User user) {
+    private Employee getEmployee(RegisterDTO employeeDTO, User user) {
         Employee employee = new Employee();
         employee.setUser(user);
         // Set fields from DTO to Employee entity
@@ -81,20 +82,19 @@ public class RegisterController {
         employee.setBirthDate(employeeDTO.getBirthDate());
         employee.setMilitaryServiceInfo(employeeDTO.getMilitaryServiceInfo());
         employee.setDriversLicence(employeeDTO.getDriversLicence());
-        employee.setInfoText(employeeDTO.getInfoText());
         return employee;
     }
 
 
     //Company Register
     @PostMapping("/company/register")
-    public ResponseEntity<CustomJson<Object>> register(@ModelAttribute CompanyDTO companyDTO,@ModelAttribute UserDTO userDTO) {
+    public ResponseEntity<CustomJson<Object>> register(@RequestBody CompanyRegisterDTO companyDTO) {
         try {
             User user = new User();
-            user.setName(userDTO.getName());
-            user.setSurname(userDTO.getSurname());
-            user.setEmail(userDTO.getEmail());
-            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            user.setName(companyDTO.getName());
+            user.setSurname(companyDTO.getSurname());
+            user.setEmail(companyDTO.getEmail());
+            user.setPassword(passwordEncoder.encode(companyDTO.getPassword()));
 
             user = userRepository.saveAndFlush(user);
 
@@ -120,16 +120,16 @@ public class RegisterController {
         }
     }
 
-    private Company getCompany(CompanyDTO companyDTO, User user) {
+    private Company getCompany(CompanyRegisterDTO companyDTO, User user) {
         Company company = new Company();
         company.setUser(user);
         // Set fields from DTO to Company entity
-        company.setHasTaxOffice(companyDTO.getHasTaxOffice());
         company.setTaxNo(companyDTO.getTaxNo());
         company.setCompanyName(companyDTO.getCompanyName());
         company.setPhoneNo(companyDTO.getPhoneNo());
         company.setAddress(companyDTO.getAddress());
         company.setxCoor(companyDTO.getxCoor());
+        company.setSector(companyDTO.getSector());
         company.setyCoor(companyDTO.getyCoor());
         company.setConfirmationCode(companyDTO.getConfirmationCode());
         company.setConfirmationTime(companyDTO.getConfirmationTime());

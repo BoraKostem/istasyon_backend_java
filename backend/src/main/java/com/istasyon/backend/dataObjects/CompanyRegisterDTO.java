@@ -2,17 +2,20 @@ package com.istasyon.backend.dataObjects;
 
 import java.time.LocalDateTime;
 
-public class CompanyDTO {
+public class CompanyRegisterDTO {
+    private String name;
+    private String surname;
+    private String email;
+    private String password;
     private Boolean hasTaxOffice = false;
-
     private String taxNo = null;
-
     private String companyName;
     private String phoneNo;
     private String address = "NULL";
     private Double xCoor = 0.0;
     private Double yCoor = 0.0;
     private String confirmationCode = "-1";
+    private String sector = "NULL";
     private LocalDateTime confirmationTime = LocalDateTime.of(2000,1,1,0,0);
 
     public Boolean getHasTaxOffice() {
@@ -85,5 +88,45 @@ public class CompanyDTO {
 
     public void setConfirmationTime(LocalDateTime confirmationTime) {
         this.confirmationTime = confirmationTime;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getSector() {
+        return sector;
+    }
+
+    public void setSector(String sector) {
+        this.sector = sector;
     }
 }

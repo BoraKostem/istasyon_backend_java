@@ -15,7 +15,7 @@ public class Application {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "addId")
+    @JoinColumn(name = "adId")
     private CompPostsAds compPostsAds;
 
     @Id
