@@ -1,7 +1,6 @@
 package com.istasyon.backend.controllers.employee;
 
 import com.istasyon.backend.dataObjects.EmployeeSkillDTO;
-import com.istasyon.backend.entities.Employee;
 import com.istasyon.backend.entities.HasSkills;
 import com.istasyon.backend.entities.Skills;
 import com.istasyon.backend.entities.User;
@@ -20,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController

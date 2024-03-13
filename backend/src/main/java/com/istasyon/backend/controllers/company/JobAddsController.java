@@ -1,11 +1,15 @@
 package com.istasyon.backend.controllers.company;
 
+import com.istasyon.backend.dataObjects.EmployeeSkillDTO;
 import com.istasyon.backend.dataObjects.JobAddDTO;
-import com.istasyon.backend.entities.CompPostsAds;
-import com.istasyon.backend.entities.Company;
-import com.istasyon.backend.entities.User;
+import com.istasyon.backend.dataObjects.JobSkillDTO;
+import com.istasyon.backend.entities.*;
 import com.istasyon.backend.repositories.CompanyRepo;
 import com.istasyon.backend.repositories.JobAddRepo;
+import com.istasyon.backend.repositories.RequiresSkillsRepo;
+import com.istasyon.backend.repositories.SkillsRepo;
+import com.istasyon.backend.repositories.compositeIds.HasSkillsId;
+import com.istasyon.backend.repositories.compositeIds.RequiresSkillsId;
 import com.istasyon.backend.utilities.CustomJson;
 import com.istasyon.backend.utilities.JsonCreator;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @PreAuthorize("hasRole('ROLE_COMPANY')")
@@ -23,10 +28,14 @@ public class JobAddsController {
     private final JobAddRepo jobAddRepo;
     private final JsonCreator jsonCreator;
     private final CompanyRepo companyRepo;
-    public JobAddsController(JobAddRepo jobAddRepo, JsonCreator jsonCreator, CompanyRepo companyRepo) {
+    private final SkillsRepo skillsRepo;
+    private final RequiresSkillsRepo requiresSkillsRepo;
+    public JobAddsController(JobAddRepo jobAddRepo, JsonCreator jsonCreator, CompanyRepo companyRepo, SkillsRepo skillsRepo, RequiresSkillsRepo requiresSkillsRepo) {
         this.jobAddRepo = jobAddRepo;
         this.jsonCreator = jsonCreator;
         this.companyRepo = companyRepo;
+        this.skillsRepo = skillsRepo;
+        this.requiresSkillsRepo = requiresSkillsRepo;
     }
 
     /**
@@ -83,5 +92,91 @@ public class JobAddsController {
         jobAdd.setStatus(jobAddDTO.getStatus());
         jobAdd.setCompany(company);
         return jobAdd;
+    }
+
+    /**
+     * This method is responsible for adding a skill to a job advertisement.
+     * It first retrieves the job advertisement using the provided adId.
+     * Then, it adds the skill to the job advertisement using the provided DTO.
+     * If the skill is already associated with the job advertisement, it returns a response with a 200 status code and a message indicating that the skill is already associated with the job advertisement.
+     * If the skill is not associated with the job advertisement, it creates a new RequiresSkills object and saves it to the repository.
+     * If an exception occurs during the creation, it returns a response with a 500 status code and a failure message.
+     * If the creation is successful, it returns a response with a 200 status code and a success message.
+     *
+     * @param jobSkillDTO The data transfer object containing the details of the skill to be added to the job advertisement.
+     * @return A ResponseEntity containing a CustomJson object. The object contains a message indicating the result of the operation and, in case of success, the added skill.
+     */
+    @PostMapping("/addSkill")
+    public ResponseEntity<CustomJson<Object>> addSkill(@RequestBody JobSkillDTO jobSkillDTO) {
+        CompPostsAds currentAdd = jobAddRepo.findByadId(jobSkillDTO.getAdId());
+        if (currentAdd == null) {
+            return jsonCreator.create(new HashMap<String,Object>(){{
+                put("Message","Job Add with ID " + jobSkillDTO.getAdId() + " does not exist");
+            }}, 404);
+        }
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<Integer,String> skills = new HashMap<>();
+        jobSkillDTO.getSkills().forEach(skillId -> skills.put(skillId,addSkilltoAdd(skillId, currentAdd)));
+        resultMap.put("Skills",skills);
+        return jsonCreator.create(resultMap, 200);
+    }
+
+    private String addSkilltoAdd(Integer skillId, CompPostsAds currentAdd) {
+        Skills skill = skillsRepo.findBySkillId(skillId);
+        if (skill == null) {
+            return "Skill with ID " + skillId + " does not exist";
+        }
+        RequiresSkillsId requiresSkillsId = new RequiresSkillsId(skillId, currentAdd.getAdId());
+        if (requiresSkillsRepo.findById(requiresSkillsId).isPresent()) {
+            return "Job Add Already has this skill: " + skill.getSkillName();
+        }
+        try {
+            RequiresSkills reqSkills = new RequiresSkills();
+            reqSkills.setSkill(skill);
+            reqSkills.setCompPostsAds(currentAdd);
+            requiresSkillsRepo.save(reqSkills);
+        } catch (Exception e) {
+            return "Skill with ID " + skillId + " could not be added: " + e;
+        }
+        return "Success";
+    }
+
+    /**
+     * This method is responsible for deleting a skill from a job advertisement.
+     * It first retrieves the job advertisement using the adId from the provided DTO.
+     * If the job advertisement does not exist, it returns a response with a 404 status code and a failure message.
+     * Then, it iterates over the skills in the DTO and attempts to delete each one from the job advertisement.
+     * The result of each deletion operation is stored in a map with the skillId as the key and the result message as the value.
+     * Finally, it returns a response with a 200 status code and the map of results.
+     *
+     * @param jobSkillDTO The data transfer object containing the adId of the job advertisement and the ids of the skills to be deleted.
+     * @return A ResponseEntity containing a CustomJson object. The object contains a map of the results of the deletion operations for each skill.
+     */
+    @PostMapping("/deleteSkill")
+    public ResponseEntity<CustomJson<Object>> deleteSkill(@RequestBody JobSkillDTO jobSkillDTO) {
+        CompPostsAds currentAdd = jobAddRepo.findByadId(jobSkillDTO.getAdId());
+        if (currentAdd == null) {
+            return jsonCreator.create(new HashMap<String,Object>(){{
+                put("Message","Job Add with ID " + jobSkillDTO.getAdId() + " does not exist");
+            }}, 404);
+        }
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<Integer,String> skills = new HashMap<>();
+        jobSkillDTO.getSkills().forEach(skillId -> skills.put(skillId,deleteSkillfromAdd(skillId, currentAdd)));
+        resultMap.put("Skills",skills);
+        return jsonCreator.create(resultMap, 200);
+    }
+
+    private String deleteSkillfromAdd(Integer skillId, CompPostsAds currentAdd) {
+        RequiresSkillsId requiresSkillsId = new RequiresSkillsId(skillId, currentAdd.getAdId());
+        if (requiresSkillsRepo.findById(requiresSkillsId).isEmpty()) {
+            return "Job Add does not have this skill with ID: " + skillId;
+        }
+        try {
+            requiresSkillsRepo.deleteById(requiresSkillsId);
+        } catch (Exception e) {
+            return "Skill with ID " + skillId + " could not be deleted: " + e;
+        }
+        return "Success";
     }
 }

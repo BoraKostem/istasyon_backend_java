@@ -1,9 +1,11 @@
 package com.istasyon.backend.entities;
 
+import com.istasyon.backend.repositories.compositeIds.RequiresSkillsId;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Requires_Skills")
+@IdClass(RequiresSkillsId.class)
 public class RequiresSkills {
 
     @Id
