@@ -7,7 +7,6 @@ public class CompanyRegisterDTO {
     private String surname;
     private String email;
     private String password;
-    private Boolean hasTaxOffice = false;
     private String taxNo = null;
     private String companyName;
     private String phoneNo;
@@ -17,14 +16,6 @@ public class CompanyRegisterDTO {
     private String confirmationCode = "-1";
     private String sector = "NULL";
     private LocalDateTime confirmationTime = LocalDateTime.of(2000,1,1,0,0);
-
-    public Boolean getHasTaxOffice() {
-        return hasTaxOffice;
-    }
-
-    public void setHasTaxOffice(Boolean hasTaxOffice) {
-        this.hasTaxOffice = hasTaxOffice;
-    }
 
     public String getTaxNo() {
         return taxNo;

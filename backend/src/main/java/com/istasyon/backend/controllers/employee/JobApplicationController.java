@@ -13,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 import static com.istasyon.backend.entities.enumeration.Status.ACTIVE;
 
@@ -25,12 +27,16 @@ public class JobApplicationController {
     private final ApplicationRepo applicationRepo;
     private final JobAddRepo jobAddRepo;
     private final CompanyRepo companyRepo;
-    public JobApplicationController(JsonCreator jsonCreator, EmployeeRepo employeeRepo, ApplicationRepo applicationRepo, JobAddRepo jobAddRepo, CompanyRepo companyRepo) {
+    private final RequiresSkillsRepo requiresSkillsRepo;
+    private final HasSkillsRepo hasSkillsRepo;
+    public JobApplicationController(JsonCreator jsonCreator, EmployeeRepo employeeRepo, ApplicationRepo applicationRepo, JobAddRepo jobAddRepo, CompanyRepo companyRepo, RequiresSkillsRepo requiresSkillsRepo, HasSkillsRepo hasSkillsRepo) {
         this.jsonCreator = jsonCreator;
         this.employeeRepo = employeeRepo;
         this.applicationRepo = applicationRepo;
         this.jobAddRepo = jobAddRepo;
         this.companyRepo = companyRepo;
+        this.requiresSkillsRepo = requiresSkillsRepo;
+        this.hasSkillsRepo = hasSkillsRepo;
     }
 
     /**
@@ -107,34 +113,22 @@ public class JobApplicationController {
             response.put("Message", "Job advertisement not found");
             return jsonCreator.create(response, 404);
         }
-        /*
-        if(jobAdd.getQualification() == null || jobAdd.getQualification().isEmpty()) {
-            response.put("Message", "No qualification required");
+        //Getting user skills
+        List<HasSkills> empSkill = hasSkillsRepo.findByEmployee_eUserNo(currentUser.getUserId());
+        //Getting job requirements
+        List<RequiresSkills> jobReq = requiresSkillsRepo.findByCompPostsAds_adId(postId);
+        if(jobReq.isEmpty()) {
+            response.put("Message", "No skills required for this job");
             return jsonCreator.create(response, 200);
         }
-        Employee employee = employeeRepo.findByeUserNo(currentUser.getUserId());
-        if(employee.getQualification() == null || employee.getQualification().isEmpty()) {
-            response.put("Message", "You are not qualified for this job");
-            return jsonCreator.create(response, 200);
-        }
-        String[] jobQualifications = jobAdd.getQualification().split(",");
-        String[] employeeQualifications = employee.getQualification().split(",");
-        for(String jobQualification : jobQualifications) {
-            boolean found = false;
-            for(String employeeQualification : employeeQualifications) {
-                if(jobQualification.equals(employeeQualification)) {
-                    found = true;
-                    break;
-                }
-            }
-            if(!found) {
-                response.put("Message", "You are not qualified for this job");
-                return jsonCreator.create(response, 200);
+        HashMap<String, Object> noMatchSkills = new HashMap<>();
+        for(RequiresSkills req : jobReq) {
+            if(empSkill.stream().noneMatch(skill -> Objects.equals(skill.getSkill().getSkillId(), req.getSkill().getSkillId()))) {
+                noMatchSkills.put(req.getSkill().getSkillName(), req.getSkill().getSkillId());
             }
         }
+        response.put("MissingSkills", noMatchSkills);
 
-         */
-        response.put("Message", "You are qualified for this job");
         return jsonCreator.create(response, 200);
     }
 }
