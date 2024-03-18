@@ -45,6 +45,16 @@ public class Employee {
     @Column(name = "salary_expectation", columnDefinition = "TEXT")
     private String salaryExpectation;
 
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "current_company", referencedColumnName = "cUserNo")
+    private Company company;
+
+    @Column(name = "company_name")
+    private String companyName;
+
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
     @OneToOne
     @MapsId
     @JoinColumn(name = "eUserNo", referencedColumnName = "user_id", insertable = false, updatable = false)
@@ -170,5 +180,29 @@ public class Employee {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 }
