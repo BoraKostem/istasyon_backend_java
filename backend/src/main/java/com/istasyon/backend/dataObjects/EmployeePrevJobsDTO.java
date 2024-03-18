@@ -1,14 +1,15 @@
 package com.istasyon.backend.dataObjects;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.istasyon.backend.entities.enumeration.JobType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 public class EmployeePrevJobsDTO {
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date endDate;
     private JobType jobType; // "FULL_TIME", "PART_TIME", "INTERNSHIP", "TEMPORARY"
     private String employerComment;

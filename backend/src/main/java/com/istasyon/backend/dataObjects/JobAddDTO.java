@@ -1,5 +1,6 @@
 package com.istasyon.backend.dataObjects;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.istasyon.backend.entities.enumeration.Currency;
 import com.istasyon.backend.entities.enumeration.JobType;
 import com.istasyon.backend.entities.enumeration.Status;
@@ -10,15 +11,15 @@ import java.time.LocalDate;
 public class JobAddDTO {
     private String jobName;
     private JobType jobType = JobType.FULL_TIME;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate publishDate = LocalDate.now();
     private Integer estimatedSalary;
     private Currency currency = Currency.TL;
-    private String workDays;
+    private int workDays;
     private Double workHours;
     private Transportation transportation = Transportation.NULL;
-    private Integer ageMin = -1;
-    private Integer ageMax = -1;
     private String gender = "";
+    private Integer viewCount = 0;
 
     private Status status = Status.ACTIVE;
 
@@ -59,11 +60,11 @@ public class JobAddDTO {
     public void setCurrency(Currency currency) {
         this.currency = currency;
     }
-    public String getWorkDays() {
+    public int getWorkDays() {
         return workDays;
     }
 
-    public void setWorkDays(String workDays) {
+    public void setWorkDays(int workDays) {
         this.workDays = workDays;
     }
 
@@ -83,22 +84,6 @@ public class JobAddDTO {
         this.transportation = transportation;
     }
 
-    public Integer getAgeMin() {
-        return ageMin;
-    }
-
-    public void setAgeMin(Integer ageMin) {
-        this.ageMin = ageMin;
-    }
-
-    public Integer getAgeMax() {
-        return ageMax;
-    }
-
-    public void setAgeMax(Integer ageMax) {
-        this.ageMax = ageMax;
-    }
-
     public String getGender() {
         return gender;
     }
@@ -113,5 +98,13 @@ public class JobAddDTO {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Integer getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Integer viewCount) {
+        this.viewCount = viewCount;
     }
 }

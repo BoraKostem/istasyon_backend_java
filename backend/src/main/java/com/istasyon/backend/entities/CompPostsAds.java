@@ -13,37 +13,46 @@ import java.time.LocalDate;
 public class CompPostsAds {
 
     @Id
-    @Column(length = 8)
+    @Column(name = "ad_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long adId;
 
-    @Column(length = 50)
+    @Column(name = "job_name", length = 50)
     private String jobName;
 
+    @Column(name = "publish_date")
     private LocalDate publishDate;
+
+    @Column(name = "estimated_salary")
     private Integer estimatedSalary;
     @Enumerated(EnumType.STRING) // "TL", "USD", "EUR"
     private Currency currency;
-
-    @Column(length = 50)
-    private String workDays;
-
-    private Double workHours;
-
-    @Enumerated(EnumType.STRING) // "TRANSPORTATION_BUDGET", "COMPANY_SERVICE", "NULL"
-    private Transportation transportation;
-
     @Enumerated(EnumType.STRING) // "FULL_TIME", "PART_TIME", "INTERNSHIP", "TEMPORARY"
     private JobType jobType;
-
-    private Integer ageMin;
-    private Integer ageMax;
-
+    @Column(name = "food", columnDefinition = "TEXT")
+    private String food;
+    @Column(name = "bonus")
+    private Boolean bonus;
+    @Column(name = "health_insurance", columnDefinition = "TEXT")
+    private String healthInsurance;
+    @Column(name = "insurance", columnDefinition = "TEXT")
+    private String insurance;
+    @Column(name = "exp_min")
+    private Integer expMin;
+    @Column(name = "edu_min", columnDefinition = "TEXT")
+    private String eduMin;
     @Column(length = 1)
     private String gender;
-
     @Enumerated(EnumType.STRING) // "ACTIVE", "DRAFT", "DELETED
     private Status status;
+    @Column(name = "work_days")
+    private int workDays;
+    @Column(name = "work_hours", columnDefinition = "REAL")
+    private Double workHours;
+    @Column(name = "view_count")
+    private Integer viewCount = 0;
+    @Enumerated(EnumType.STRING) // "TRANSPORTATION_BUDGET", "COMPANY_SERVICE", "NULL"
+    private Transportation transportation;
 
     @ManyToOne
     @JoinColumn(name = "c_user_no")
@@ -99,11 +108,11 @@ public class CompPostsAds {
         this.jobType = jobType;
     }
 
-    public String getWorkDays() {
+    public int getWorkDays() {
         return workDays;
     }
 
-    public void setWorkDays(String workDays) {
+    public void setWorkDays(int workDays) {
         this.workDays = workDays;
     }
 
@@ -121,22 +130,6 @@ public class CompPostsAds {
 
     public void setTransportation(Transportation transportation) {
         this.transportation = transportation;
-    }
-
-    public Integer getAgeMin() {
-        return ageMin;
-    }
-
-    public void setAgeMin(Integer ageMin) {
-        this.ageMin = ageMin;
-    }
-
-    public Integer getAgeMax() {
-        return ageMax;
-    }
-
-    public void setAgeMax(Integer ageMax) {
-        this.ageMax = ageMax;
     }
 
     public String getGender() {
@@ -161,6 +154,62 @@ public class CompPostsAds {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public String getFood() {
+        return food;
+    }
+
+    public void setFood(String food) {
+        this.food = food;
+    }
+
+    public Boolean getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(Boolean bonus) {
+        this.bonus = bonus;
+    }
+
+    public String getHealthInsurance() {
+        return healthInsurance;
+    }
+
+    public void setHealthInsurance(String healthInsurance) {
+        this.healthInsurance = healthInsurance;
+    }
+
+    public String getInsurance() {
+        return insurance;
+    }
+
+    public void setInsurance(String insurance) {
+        this.insurance = insurance;
+    }
+
+    public Integer getExpMin() {
+        return expMin;
+    }
+
+    public void setExpMin(Integer expMin) {
+        this.expMin = expMin;
+    }
+
+    public String getEduMin() {
+        return eduMin;
+    }
+
+    public void setEduMin(String eduMin) {
+        this.eduMin = eduMin;
+    }
+
+    public Integer getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Integer viewCount) {
+        this.viewCount = viewCount;
     }
 }
 

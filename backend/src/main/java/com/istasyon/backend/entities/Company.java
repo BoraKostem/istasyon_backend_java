@@ -12,9 +12,6 @@ public class Company {
     @Column(length = 10)
     private Long cUserNo;
 
-    @Column(nullable = false)
-    private Boolean hasTaxOffice;
-
     @Column(length = 10, unique = true, nullable = true)
     private String taxNo;
 
@@ -23,6 +20,9 @@ public class Company {
 
     @Column(length = 10)
     private String phoneNo;
+
+    @Column(name = "sector", columnDefinition = "CHAR(20)")
+    private String sector;
 
     @Column(length = 200)
     private String address;
@@ -37,7 +37,7 @@ public class Company {
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "cUserNo", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "cUserNo", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User user;
 
     // Getters and setters...
@@ -48,14 +48,6 @@ public class Company {
 
     public void setcUserNo(Long cUserNo) {
         this.cUserNo = cUserNo;
-    }
-
-    public Boolean getHasTaxOffice() {
-        return hasTaxOffice;
-    }
-
-    public void setHasTaxOffice(Boolean hasTaxOffice) {
-        this.hasTaxOffice = hasTaxOffice;
     }
 
     public String getTaxNo() {
@@ -120,6 +112,14 @@ public class Company {
 
     public void setConfirmationTime(LocalDateTime confirmationTime) {
         this.confirmationTime = confirmationTime;
+    }
+
+    public String getSector() {
+        return sector;
+    }
+
+    public void setSector(String sector) {
+        this.sector = sector;
     }
 
     public User getUser() {

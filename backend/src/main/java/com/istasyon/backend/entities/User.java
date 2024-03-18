@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(name = "name")
@@ -16,7 +17,7 @@ public class User {
     @Column(name = "surname")
     private String surname;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "e_mail", unique = true)
     private String email;
 
     @Column(name = "password")
@@ -27,7 +28,7 @@ public class User {
 
     //Email verification check
     @Column(name = "is_verified")
-    private Boolean isVerified = false;
+    private int isVerified = 0;
 
     // Relationships, other fields, getters, and setters
     public String getEmail() {

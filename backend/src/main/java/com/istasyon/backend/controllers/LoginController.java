@@ -12,10 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @RestController
@@ -31,14 +28,8 @@ public class LoginController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<CustomJson<Object>> login(HttpServletRequest request) {
-        String data = "Login successful";
-        return jsonCreator.create(data);
-    }
-
     @PostMapping("/login")
-    public ResponseEntity<CustomJson<Object>> login(@ModelAttribute UserDTO userDTO, HttpServletResponse response) {
+    public ResponseEntity<CustomJson<Object>> login(@RequestBody UserDTO userDTO, HttpServletResponse response) {
         try {
             if (userDTO.getEmail() == null || userDTO.getPassword() == null) {
                 return jsonCreator.create("Email and password must be provided", 400);
