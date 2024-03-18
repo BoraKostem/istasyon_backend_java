@@ -42,29 +42,50 @@ public class SkillController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         Map<String, Object> resultMap = new HashMap<>();
-        Map<Integer,String> skills = new HashMap<>();
-        employeeSkillDTO.getSkills().forEach(skillId -> skills.put(skillId,addSkilltoEmployee(skillId, currentUser)));
-        resultMap.put("Skills",skills);
+        Map<Integer,String> successSkills = new HashMap<>();
+        Map<Integer,String> failSkills = new HashMap<>();
+        Map<Integer,String> alreadyHaveSkills = new HashMap<>();
+        for (Integer skillId : employeeSkillDTO.getSkills()) {
+            Map<String, String> result = addSkilltoEmployee(skillId, currentUser);
+            if (result.get("status").equals("Success")) {
+                successSkills.put(skillId, result.get("skillName"));
+            } else if (result.get("status").equals("Fail")) {
+                failSkills.put(skillId, result.get("skillName"));
+            } else if (result.get("status").equals("AlreadyHave")) {
+                alreadyHaveSkills.put(skillId, result.get("skillName"));
+            }
+        }
+        resultMap.put("Success", successSkills);
+        resultMap.put("Fail", failSkills);
+        resultMap.put("AlreadyHave", alreadyHaveSkills);
         return jsonCreator.create(resultMap, 200);
     }
 
-    private String addSkilltoEmployee(Integer skillId, User currentUser) {
+    private Map<String, String> addSkilltoEmployee(Integer skillId, User currentUser) {
+        Map<String, String> result = new HashMap<>();
         Skills skill = skillsRepo.findBySkillId(skillId);
         if (skill == null) {
-            return "Skill with ID " + skillId + " does not exist";
+            result.put("status", "Fail");
+            result.put("skillName", "NULL");
+            return result;
         }
         HasSkillsId hasSkillsId = new HasSkillsId(skillId, currentUser.getUserId());
         if (hasSkillsRepo.findById(hasSkillsId).isPresent()) {
-            return "Employee Already has this skill: " + skill.getSkillName();
+            result.put("status", "AlreadyHave");
+            result.put("skillName", skill.getSkillName());
+            return result;
         }
         try {
             HasSkills hasSkills = new HasSkills();
             hasSkills.setSkill(skill);
             hasSkills.setEmployee(employeeRepo.findByeUserNo(currentUser.getUserId()));
             hasSkillsRepo.save(hasSkills);
+            result.put("status", "Success");
+            result.put("skillName", skill.getSkillName());
         } catch (Exception e) {
-            return "Skill with ID " + skillId + " could not be added: " + e;
+            result.put("status", "Fail");
+            result.put("skillName", skill.getSkillName());
         }
-        return "Success";
+        return result;
     }
 }

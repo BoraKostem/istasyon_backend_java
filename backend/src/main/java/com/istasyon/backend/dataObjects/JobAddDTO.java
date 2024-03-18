@@ -1,5 +1,6 @@
 package com.istasyon.backend.dataObjects;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.istasyon.backend.entities.enumeration.Currency;
 import com.istasyon.backend.entities.enumeration.JobType;
 import com.istasyon.backend.entities.enumeration.Status;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 public class JobAddDTO {
     private String jobName;
     private JobType jobType = JobType.FULL_TIME;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate publishDate = LocalDate.now();
     private Integer estimatedSalary;
     private Currency currency = Currency.TL;
@@ -17,6 +19,7 @@ public class JobAddDTO {
     private Double workHours;
     private Transportation transportation = Transportation.NULL;
     private String gender = "";
+    private Integer viewCount = 0;
 
     private Status status = Status.ACTIVE;
 
@@ -95,5 +98,13 @@ public class JobAddDTO {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Integer getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Integer viewCount) {
+        this.viewCount = viewCount;
     }
 }

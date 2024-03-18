@@ -28,20 +28,18 @@ import static org.springframework.security.authorization.AuthorityAuthorizationM
 public class JobController {
     private final JsonCreator jsonCreator;
     private final JobAddRepo jobAddRepo;
-    private final CompanyRepo companyRepo;
     private final EmployeeRepo employeeRepo;
     private final GoogleMapsService googleMapsService;
-    public JobController(JsonCreator jsonCreator, JobAddRepo jobAddRepo, CompanyRepo companyRepo, EmployeeRepo employeeRepo, GoogleMapsService googleMapsService) {
+    public JobController(JsonCreator jsonCreator, JobAddRepo jobAddRepo, EmployeeRepo employeeRepo, GoogleMapsService googleMapsService) {
         this.jsonCreator = jsonCreator;
         this.jobAddRepo = jobAddRepo;
-        this.companyRepo = companyRepo;
         this.employeeRepo = employeeRepo;
         this.googleMapsService = googleMapsService;
     }
     @GetMapping("/view")
     public ResponseEntity<CustomJson<Object>> viewJob(@RequestParam(required = false) Long id) {
         if(id == null){
-            return jsonCreator.create("What do you expect to view 0_0", 418);
+            return jsonCreator.create("What do you expect to view ≽^•⩊•^≼", 418);
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
@@ -56,6 +54,8 @@ public class JobController {
         if(authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"))) {
             Employee employee = employeeRepo.findByeUserNo(currentUser.getUserId());
             response.put("Distance", googleMapsService.computeDistance(employee, company));
+            job.setViewCount(job.getViewCount() + 1);
+            jobAddRepo.save(job);
         }
 
         return jsonCreator.create(response, 200);

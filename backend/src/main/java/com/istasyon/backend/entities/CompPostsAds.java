@@ -49,6 +49,8 @@ public class CompPostsAds {
     private int workDays;
     @Column(name = "work_hours", columnDefinition = "REAL")
     private Double workHours;
+    @Column(name = "view_count")
+    private Integer viewCount = 0;
     @Enumerated(EnumType.STRING) // "TRANSPORTATION_BUDGET", "COMPANY_SERVICE", "NULL"
     private Transportation transportation;
 
@@ -200,6 +202,14 @@ public class CompPostsAds {
 
     public void setEduMin(String eduMin) {
         this.eduMin = eduMin;
+    }
+
+    public Integer getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Integer viewCount) {
+        this.viewCount = viewCount;
     }
 }
 

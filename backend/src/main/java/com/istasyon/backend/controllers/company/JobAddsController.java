@@ -115,30 +115,51 @@ public class JobAddsController {
             }}, 404);
         }
         Map<String, Object> resultMap = new HashMap<>();
-        Map<Integer,String> skills = new HashMap<>();
-        jobSkillDTO.getSkills().forEach(skillId -> skills.put(skillId,addSkilltoAdd(skillId, currentAdd)));
-        resultMap.put("Skills",skills);
+        Map<Integer,String> successSkills = new HashMap<>();
+        Map<Integer,String> failSkills = new HashMap<>();
+        Map<Integer,String> alreadyHaveSkills = new HashMap<>();
+        for(Integer skillId : jobSkillDTO.getSkills()) {
+            Map<String, String> result = addSkilltoAdd(skillId, currentAdd);
+            if (result.get("status").equals("Success")) {
+                successSkills.put(skillId, result.get("skillName"));
+            } else if (result.get("status").equals("Fail")) {
+                failSkills.put(skillId, result.get("skillName"));
+            } else if (result.get("status").equals("AlreadyHave")) {
+                alreadyHaveSkills.put(skillId, result.get("skillName"));
+            }
+        }
+        resultMap.put("Success", successSkills);
+        resultMap.put("Fail", failSkills);
+        resultMap.put("AlreadyHave", alreadyHaveSkills);
         return jsonCreator.create(resultMap, 200);
     }
 
-    private String addSkilltoAdd(Integer skillId, CompPostsAds currentAdd) {
+    private Map<String, String> addSkilltoAdd(Integer skillId, CompPostsAds currentAdd) {
+        Map<String, String> result = new HashMap<>();
         Skills skill = skillsRepo.findBySkillId(skillId);
         if (skill == null) {
-            return "Skill with ID " + skillId + " does not exist";
+            result.put("status", "Fail");
+            result.put("skillName", "NULL");
+            return result;
         }
         RequiresSkillsId requiresSkillsId = new RequiresSkillsId(skillId, currentAdd.getAdId());
         if (requiresSkillsRepo.findById(requiresSkillsId).isPresent()) {
-            return "Job Add Already has this skill: " + skill.getSkillName();
+            result.put("status", "AlreadyHave");
+            result.put("skillName", skill.getSkillName());
+            return result;
         }
         try {
             RequiresSkills reqSkills = new RequiresSkills();
             reqSkills.setSkill(skill);
             reqSkills.setCompPostsAds(currentAdd);
             requiresSkillsRepo.save(reqSkills);
+            result.put("status", "Success");
+            result.put("skillName", skill.getSkillName());
         } catch (Exception e) {
-            return "Skill with ID " + skillId + " could not be added: " + e;
+            result.put("status", "Fail");
+            result.put("skillName", skill.getSkillName());
         }
-        return "Success";
+        return result;
     }
 
     /**

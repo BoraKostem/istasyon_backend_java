@@ -18,7 +18,7 @@ public class RegisterDTO {
     private String confirmationCode = "-1";
     private LocalDateTime confirmationTime = LocalDateTime.of(2000,1,1,0,0);
     private String gender;
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
     private String militaryServiceInfo = "NULL";
     private Boolean driversLicence = false;
