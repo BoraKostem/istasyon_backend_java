@@ -87,6 +87,12 @@ public class JobAddsController {
         jobAdd.setCurrency(jobAddDTO.getCurrency());
         jobAdd.setWorkDays(jobAddDTO.getWorkDays());
         jobAdd.setWorkHours(jobAddDTO.getWorkHours());
+        jobAdd.setBonus(jobAddDTO.getBonus());
+        jobAdd.setEduMin(jobAddDTO.getEduMin());
+        jobAdd.setExpMin(jobAddDTO.getExpMin());
+        jobAdd.setFood(jobAddDTO.getFood());
+        jobAdd.setHealthInsurance(jobAddDTO.getHealthInsurance());
+        jobAdd.setInsurance(jobAddDTO.getInsurance());
         jobAdd.setTransportation(jobAddDTO.getTransportation());
         jobAdd.setGender(jobAddDTO.getGender());
         jobAdd.setStatus(jobAddDTO.getStatus());

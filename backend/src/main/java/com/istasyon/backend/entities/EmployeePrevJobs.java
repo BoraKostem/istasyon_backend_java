@@ -1,8 +1,11 @@
 package com.istasyon.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.istasyon.backend.entities.enumeration.JobType;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -16,9 +19,11 @@ public class EmployeePrevJobs {
     @Column
     private Long companyId;
     @Column
-    private Date startDate;
+    private String companyName;
     @Column
-    private Date endDate;
+    private LocalDate startDate;
+    @Column
+    private LocalDate endDate;
     @Column
     @Enumerated(EnumType.STRING) // "FULL_TIME", "PART_TIME", "INTERNSHIP", "TEMPORARY"
     private JobType jobType;
@@ -34,14 +39,25 @@ public class EmployeePrevJobs {
     private Double responsibility;
     @Column(columnDefinition = "DECIMAL(2,1) CHECK (personal_growth >= 0 AND personal_growth <= 5)")
     private Double personal_growth;
-    @OneToOne
-    @MapsId
+    @ManyToOne
+    @MapKey(name = "employeeId")
     @JoinColumn(name = "employeeId", referencedColumnName = "eUserNo", insertable = false, updatable = false)
     private Employee employee;
-    @OneToOne
-    @MapsId
+
+    @JsonIgnore
+    @ManyToOne
+    @MapKey(name = "companyId")
     @JoinColumn(name = "companyId", referencedColumnName = "cUserNo", insertable = false, updatable = false)
     private Company company;
+
+    //TO STRING
+    @JsonProperty("Company")
+    public String getJobCompany() {
+        if(company.getcUserNo() != -1){
+            return company.toString();
+        }
+        return companyName;
+    }
 
     // Getters and setters...
 
@@ -69,19 +85,19 @@ public class EmployeePrevJobs {
         this.companyId = companyId;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -139,6 +155,30 @@ public class EmployeePrevJobs {
 
     public void setPersonalGrowth(Double personalGrowth) {
         this.personal_growth = personalGrowth;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public Double getTeam_work() {
+        return team_work;
+    }
+
+    public void setTeam_work(Double team_work) {
+        this.team_work = team_work;
+    }
+
+    public Double getPersonal_growth() {
+        return personal_growth;
+    }
+
+    public void setPersonal_growth(Double personal_growth) {
+        this.personal_growth = personal_growth;
     }
 
     public Employee getEmployee() {

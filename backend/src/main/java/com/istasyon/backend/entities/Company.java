@@ -1,5 +1,6 @@
 package com.istasyon.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -8,10 +9,12 @@ import java.time.LocalDateTime;
 @Table(name = "Company")
 public class Company {
 
+    @JsonIgnore
     @Id
     @Column(length = 10)
     private Long cUserNo;
 
+    @JsonIgnore
     @Column(length = 10, unique = true, nullable = true)
     private String taxNo;
 
@@ -27,18 +30,31 @@ public class Company {
     @Column(length = 200)
     private String address;
 
+    @JsonIgnore
     private Double xCoor;
+    @JsonIgnore
     private Double yCoor;
 
+    @JsonIgnore
     @Column(length = 6)
     private String confirmationCode;
 
+    @JsonIgnore
     private LocalDateTime confirmationTime;
 
+    @JsonIgnore
     @OneToOne
     @MapsId
     @JoinColumn(name = "cUserNo", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User user;
+
+    // TO STRING
+    @Override
+    public String toString() {
+        return String.format(
+                "[company='%s', phone='%s', sector='%s', address='%s']",
+                companyName, phoneNo, sector, address);
+    }
 
     // Getters and setters...
 

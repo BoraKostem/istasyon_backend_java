@@ -20,6 +20,8 @@ public class RegisterDTO {
     private String gender;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
+    private String salaryExpectation = "-";
+    private String eduLvl = "-";
     private String militaryServiceInfo = "NULL";
     private Boolean driversLicence = false;
 
@@ -134,5 +136,21 @@ public class RegisterDTO {
 
     public void setMilitaryServiceInfo(String militaryServiceInfo) {
         this.militaryServiceInfo = militaryServiceInfo;
+    }
+
+    public String getSalaryExpectation() {
+        return salaryExpectation;
+    }
+
+    public void setSalaryExpectation(String salaryExpectation) {
+        this.salaryExpectation = salaryExpectation;
+    }
+
+    public String getEduLvl() {
+        return eduLvl;
+    }
+
+    public void setEduLvl(String eduLvl) {
+        this.eduLvl = eduLvl;
     }
 }
