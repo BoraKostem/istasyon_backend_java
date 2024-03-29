@@ -74,6 +74,9 @@ public class Employee {
     @Column(name = "start_date")
     private LocalDate startDate;
 
+    @Column(name = "skills")
+    private String skills;
+
     @JsonIgnore
     @OneToOne
     @MapsId

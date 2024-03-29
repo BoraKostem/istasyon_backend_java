@@ -53,7 +53,8 @@ public class CompPostsAds {
     private Integer viewCount = 0;
     @Enumerated(EnumType.STRING) // "TRANSPORTATION_BUDGET", "COMPANY_SERVICE", "NULL"
     private Transportation transportation;
-
+    @Column(name = "skills")
+    private String skills;
     @ManyToOne
     @JoinColumn(name = "c_user_no")
     private Company company;
