@@ -9,6 +9,7 @@ import com.istasyon.backend.entities.User;
 import com.istasyon.backend.repositories.CompanyRepo;
 import com.istasyon.backend.repositories.EmployeePrevJobsRepo;
 import com.istasyon.backend.repositories.EmployeeRepo;
+import com.istasyon.backend.services.EmailService;
 import com.istasyon.backend.utilities.CustomJson;
 import com.istasyon.backend.utilities.JsonCreator;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +28,13 @@ public class EmploymentController {
     private final EmployeeRepo employeeRepo;
     private final CompanyRepo companyRepo;
     private final EmployeePrevJobsRepo employeePrevJobsRepo;
-    public EmploymentController(JsonCreator jsonCreator, EmployeeRepo employeeRepo, CompanyRepo companyRepo, EmployeePrevJobsRepo employeePrevJobsRepo) {
+    private final EmailService emailService;
+    public EmploymentController(JsonCreator jsonCreator, EmployeeRepo employeeRepo, CompanyRepo companyRepo, EmployeePrevJobsRepo employeePrevJobsRepo, EmailService emailService) {
         this.jsonCreator = jsonCreator;
         this.employeeRepo = employeeRepo;
         this.companyRepo = companyRepo;
         this.employeePrevJobsRepo = employeePrevJobsRepo;
+        this.emailService = emailService;
     }
 
     /**
@@ -73,6 +76,9 @@ public class EmploymentController {
             employeePrevJobsRepo.save(employeePrevJobs);
         }catch (Exception e) {
             return jsonCreator.create("Error occurred: " + e, 500);
+        }
+        if(company.getcUserNo() != -1){
+            //sendCompanyNotification(company.getUser().getEmail(), "İstasyon: Eski çalışanın için bir yorum yaz.", employee.getUser().getName() + " " + employee.getUser().getSurname() + " eski çalışma hayatına şirketinizi ekledi. \nÇalışanını değerlendirmek için aşağıdaki linke tıklayarak yorum yazabilirsin!", employee.getEUserNo());
         }
         return jsonCreator.create(employeePrevJobs,200);
     }
@@ -174,21 +180,22 @@ public class EmploymentController {
         employee.setStartDate(null);
         employee.setJobType(null);
         employeeRepo.save(employee);
-
+        if(company.getcUserNo() != -1){
+            //sendCompanyNotification(company.getUser().getEmail(), "İstasyon: Eski çalışanın için bir yorum yaz.", "" + employee.getUser().getName() + " " + employee.getUser().getSurname() + " eski çalışma hayatına şirketinizi ekledi. \nÇalışanını değerlendirmek için aşağıdaki linke tıklayarak yorum yazabilirsin!", employee.getEUserNo());
+        }
         return jsonCreator.create(employeePrevJobs,200);
     }
 
-    /**
     @DeleteMapping("/previous/delete/{id}")
     public ResponseEntity<CustomJson<Object>> deletePrevEmployment(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         Employee employee = employeeRepo.findByeUserNo(currentUser.getUserId());
-        EmployeePrevJobs employeePrevJobs = employeePrevJobsRepo.findById(id);
+        EmployeePrevJobs employeePrevJobs = employeePrevJobsRepo.findByid(id);
         if(employeePrevJobs == null){
             return jsonCreator.create("Employment record not found", 404);
         }
-        if(employeePrevJobs.getEmployee().geteUserNo() != employee.geteUserNo()){
+        if(employeePrevJobs.getEmployee().getEUserNo() != employee.getEUserNo()){
             return jsonCreator.create("You are not authorized to delete this record", 403);
         }
         try {
@@ -198,6 +205,9 @@ public class EmploymentController {
         }
         return jsonCreator.create(employeePrevJobs,200);
     }
-    **/
+
+    private void sendCompanyNotification(String companyMail, String subject, String text, Long employeeId) {
+        emailService.sendCommentMessage(companyMail, subject, text, employeeId);
+    }
 
 }
