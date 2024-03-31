@@ -22,7 +22,7 @@ class EmailServiceTest {
         EmailService emailService = new EmailService(emailSender);
 
         // Act
-        emailService.sendSimpleMessage("forumoyun2@gmail.com", "Test", "This is a test", 1L);
+        emailService.sendCommentMessage("forumoyun2@gmail.com", "Test", "This is a test", 1L);
 
         // Assert
         verify(emailSender, times(1)).send(any(SimpleMailMessage.class));
@@ -56,7 +56,7 @@ class EmailServiceTest {
         helper.setTo("forumoyun2@gmail.com");
         helper.setSubject("Test");
         helper.setText("This is a test", true);
-        emailService.sendSimpleMessage("forumoyun2@gmail.com", "Test", "This is a test", 1L);
+        emailService.sendCommentMessage("forumoyun2@gmail.com", "Test", "This is a test", 1L);
 
         // There's no assert here because we're sending a real email
         // If the email fails to send, an exception will be thrown
