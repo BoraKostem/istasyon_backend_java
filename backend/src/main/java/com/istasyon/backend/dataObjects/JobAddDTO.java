@@ -20,7 +20,12 @@ public class JobAddDTO {
     private Transportation transportation = Transportation.NULL;
     private String gender = "";
     private Integer viewCount = 0;
-
+    private String food = "";
+    private Boolean bonus = false;
+    private String healthInsurance = "";
+    private String insurance = "";
+    private Integer expMin = 0;
+    private String eduMin = "";
     private Status status = Status.ACTIVE;
 
     public String getJobName() {
@@ -106,5 +111,53 @@ public class JobAddDTO {
 
     public void setViewCount(Integer viewCount) {
         this.viewCount = viewCount;
+    }
+
+    public String getFood() {
+        return food;
+    }
+
+    public void setFood(String food) {
+        this.food = food;
+    }
+
+    public Boolean getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(Boolean bonus) {
+        this.bonus = bonus;
+    }
+
+    public String getHealthInsurance() {
+        return healthInsurance;
+    }
+
+    public void setHealthInsurance(String healthInsurance) {
+        this.healthInsurance = healthInsurance;
+    }
+
+    public String getInsurance() {
+        return insurance;
+    }
+
+    public void setInsurance(String insurance) {
+        this.insurance = insurance;
+    }
+
+    public Integer getExpMin() {
+        return expMin;
+    }
+
+    public void setExpMin(Integer expMin) {
+        this.expMin = expMin;
+    }
+
+    public String getEduMin() {
+        return eduMin;
+    }
+
+    public void setEduMin(String eduMin) {
+        this.eduMin = eduMin;
     }
 }
