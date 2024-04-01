@@ -12,10 +12,14 @@ import java.util.Date;
 @Table(name = "EmployeePrevJobs")
 public class EmployeePrevJobs {
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @JsonIgnore
     @Column
     private Long employeeId;
+
+    @JsonIgnore
     @Column
     private Long companyId;
     @Column
@@ -40,6 +44,7 @@ public class EmployeePrevJobs {
     @Column(columnDefinition = "DECIMAL(2,1) CHECK (personal_growth >= 0 AND personal_growth <= 5)")
     private Double personal_growth;
     @ManyToOne
+    @JsonIgnore
     @MapKey(name = "employeeId")
     @JoinColumn(name = "employeeId", referencedColumnName = "eUserNo", insertable = false, updatable = false)
     private Employee employee;
