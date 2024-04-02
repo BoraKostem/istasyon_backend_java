@@ -82,6 +82,7 @@ public class RegisterController {
         employee.setBirthDate(employeeDTO.getBirthDate());
         employee.setMilitaryServiceInfo(employeeDTO.getMilitaryServiceInfo());
         employee.setDriversLicence(employeeDTO.getDriversLicence());
+        employee.setSkills(employeeDTO.getSkills());
         return employee;
     }
 

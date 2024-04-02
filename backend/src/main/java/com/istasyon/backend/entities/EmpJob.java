@@ -9,8 +9,8 @@ public class EmpJob {
     @ManyToOne
     @JoinColumn(name = "eUserNo")
     private Employee employee;
-    @Column(name = "skills", length = 500)
-    private String skills;
+    @Column(name = "job", length = 500)
+    private String job;
 
     public Employee getEmployee() {
         return employee;
@@ -20,11 +20,11 @@ public class EmpJob {
         this.employee = employee;
     }
 
-    public String getSkills() {
-        return skills;
+    public String getJob() {
+        return job;
     }
 
-    public void setSkills(String skills) {
-        this.skills = skills;
+    public void setJob(String job) {
+        this.job = job;
     }
 }

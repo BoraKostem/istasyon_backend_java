@@ -1,5 +1,6 @@
 package com.istasyon.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.istasyon.backend.entities.enumeration.Currency;
 import com.istasyon.backend.entities.enumeration.JobType;
 import com.istasyon.backend.entities.enumeration.Status;
@@ -56,6 +57,7 @@ public class CompPostsAds {
     @Column(name = "skills")
     private String skills;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "c_user_no")
     private Company company;
 
