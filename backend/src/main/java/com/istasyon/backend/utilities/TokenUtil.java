@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.istasyon.backend.entities.User;
 import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -50,13 +51,18 @@ public class TokenUtil {
         }
     }
 
-    public Cookie encodeCookie(User user){
+    public ResponseCookie encodeCookie(User user){
         String token = this.encode(user);
 
-        Cookie cookie = new Cookie(cookieName,token);
-        cookie.setMaxAge(3*60*60);
-//        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
+        //Cookie cookie = new Cookie(cookieName,token);
+        //cookie.setMaxAge(36060);
+        //cookie.setSecure(true);
+        //cookie.setHttpOnly(true);
+        //cookie.set
+        ResponseCookie cookie = ResponseCookie.from(cookieName,token)
+                .maxAge(3*60*60)
+                .sameSite("None")
+                .httpOnly(false).build();
 
         return cookie;
     }

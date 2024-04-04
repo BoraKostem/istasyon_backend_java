@@ -8,8 +8,8 @@ import com.istasyon.backend.utilities.CustomJson;
 import com.istasyon.backend.utilities.JsonCreator;
 import com.istasyon.backend.utilities.TokenUtil;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -36,10 +36,9 @@ public class LoginController {
             }
             User userInDb = userRepository.findByEmail(userDTO.getEmail());
             if (userInDb != null && passwordEncoder.matches(userDTO.getPassword(), userInDb.getPassword())) {
-                Cookie cookie = tokenUtil.encodeCookie(userInDb);
-                response.addCookie(cookie);
+                ResponseCookie cookie = tokenUtil.encodeCookie(userInDb);
 
-                return jsonCreator.create(userInDb);
+                return jsonCreator.createLogin(userInDb, cookie.toString());
             } else {
                 return jsonCreator.create("Invalid email or password", 403);
             }
