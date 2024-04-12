@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -114,7 +115,9 @@ public class JobAddsController {
      */
     @PostMapping("/addSkill")
     public ResponseEntity<CustomJson<Object>> addSkill(@RequestBody JobSkillDTO jobSkillDTO) {
-        CompPostsAds currentAdd = jobAddRepo.findByadId(jobSkillDTO.getAdId());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        CompPostsAds currentAdd = jobAddRepo.findByadIdAndCompany_cUserNo(jobSkillDTO.getAdId(), currentUser.getUserId());
         if (currentAdd == null) {
             return jsonCreator.create(new HashMap<String,Object>(){{
                 put("Message","Job Add with ID " + jobSkillDTO.getAdId() + " does not exist");
@@ -181,7 +184,9 @@ public class JobAddsController {
      */
     @PostMapping("/deleteSkill")
     public ResponseEntity<CustomJson<Object>> deleteSkill(@RequestBody JobSkillDTO jobSkillDTO) {
-        CompPostsAds currentAdd = jobAddRepo.findByadId(jobSkillDTO.getAdId());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        CompPostsAds currentAdd = jobAddRepo.findByadIdAndCompany_cUserNo(jobSkillDTO.getAdId(), currentUser.getUserId());
         if (currentAdd == null) {
             return jsonCreator.create(new HashMap<String,Object>(){{
                 put("Message","Job Add with ID " + jobSkillDTO.getAdId() + " does not exist");
@@ -205,5 +210,26 @@ public class JobAddsController {
             return "Skill with ID " + skillId + " could not be deleted: " + e;
         }
         return "Success";
+    }
+
+    @GetMapping("/view")
+    public ResponseEntity<CustomJson<Object>> viewJobAdd(@RequestParam(required = false) Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        if(id != null){
+            CompPostsAds jobAdd = jobAddRepo.findByadIdAndCompany_cUserNo(id, currentUser.getUserId());
+            if(jobAdd == null) {
+                return jsonCreator.create(new HashMap<String,Object>(){{
+                    put("Message","Job Add with ID " + id + " does not exist");
+                }}, 404);
+            }
+            return jsonCreator.create(new HashMap<String,Object>(){{
+                put("JobAdd",jobAdd);
+            }}, 200);
+        }
+        List<CompPostsAds> jobAdds = jobAddRepo.findByCompany_cUserNo(currentUser.getUserId());
+        return jsonCreator.create(new HashMap<String,Object>(){{
+            put("JobAdd",jobAdds);
+        }}, 200);
     }
 }
