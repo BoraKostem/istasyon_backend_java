@@ -1,120 +1,78 @@
 package com.istasyon.backend.security;
 
 import com.istasyon.backend.entities.User;
-import com.istasyon.backend.repositories.CompanyRepo;
-import com.istasyon.backend.repositories.EmployeeRepo;
-import com.istasyon.backend.repositories.UserRepo;
+import com.istasyon.backend.services.UserService;
 import com.istasyon.backend.utilities.TokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import reactor.util.annotation.NonNull;
+
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.apache.logging.log4j.util.Strings.isEmpty;
-
 @Component
+@RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
-
-    private final TokenUtil jwtTokenUtil;
-    private final UserRepo userRepo;
-    private final EmployeeRepo employeeRepo;
-    private final CompanyRepo companyRepo;
+    private final TokenUtil tokenUtil;
+    private final UserService userService;
     @Value("${custom.cookieName}")
     private String cookieName;
-
-    public JwtTokenFilter(TokenUtil jwtTokenUtil,UserRepo userRepo, EmployeeRepo employeeRepo, CompanyRepo companyRepo) {
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userRepo= userRepo;
-        this.employeeRepo = employeeRepo;
-        this.companyRepo = companyRepo;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain)
-            throws ServletException, IOException {
-        // Get cookie and validate
-//        final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        final String jwt;
         var cookie = this.readCookieFromRequest(request);
 
         if (cookie.isEmpty() || !cookie.get().getName().equals(cookieName)) {
-            chain.doFilter(request, response);
+            filterChain.doFilter(request, response);
             return;
         }
-
-//        if (isEmpty(header) || !header.startsWith("Bearer ")) {
-//            chain.doFilter(request, response);
-//            return;
-//        }
-
-        // Get jwt token and validate
-//        final String token = header.split(" ")[1].trim();
-//        if (!jwtTokenUtil.validate(token)) {
-//            chain.doFilter(request, response);
-//            return;
-//        }
-
-        final String token = cookie.get().getValue();
-        if (!jwtTokenUtil.validate(token)) {
-            chain.doFilter(request, response);
-            return;
+        jwt = cookie.get().getValue();
+        String email = tokenUtil.getEmail(jwt);
+        if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            CustomUserDetails userDetails = userService.loadUserByUsername(email);
+            if(tokenUtil.validateToken(jwt, userDetails)){
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities());
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
+                logger.error("Token is valid" + authToken);
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+                logger.info(SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString());
+            }
+            else{
+                logger.error("Token is not valid");
+            }
         }
-
-        User userDetails = userRepo
-                .findByEmail(jwtTokenUtil.getEmail(token));
-        Long id = (long) -1;
-        if(userDetails != null){
-            id = userDetails.getUserId();
-        }
-        boolean isCompany = companyRepo.existsBycUserNo(id);
-        boolean isEmployee = employeeRepo.existsByeUserNo(id);
-        GrantedAuthority authority;
-        if(isCompany){
-            authority = new SimpleGrantedAuthority("ROLE_COMPANY");
-        } else if (isEmployee) {
-            authority = new SimpleGrantedAuthority("ROLE_EMPLOYEE");
-        } else {
-            authority = new SimpleGrantedAuthority("ROLE_UNKNOWN");
-        }
-        UsernamePasswordAuthenticationToken
-                authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, null, Collections.singletonList(authority));
-
-        authentication.setDetails(
-                new WebAuthenticationDetailsSource().buildDetails(request)
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        chain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 
-    public Optional<jakarta.servlet.http.Cookie> readCookieFromRequest(HttpServletRequest request) {
+    public Optional<Cookie> readCookieFromRequest(HttpServletRequest request) {
         var cook = request.getCookies();
-
         if (cook == null) {
             return Optional.empty();
         }
-
-        Optional<Cookie> maybeCookie = Stream.of(request.getCookies())
+        return Stream.of(request.getCookies())
                 .filter(c -> cookieName.equals(c.getName()))
                 .findFirst();
-
-        return maybeCookie;
     }
 }

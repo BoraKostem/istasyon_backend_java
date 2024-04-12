@@ -16,7 +16,6 @@ public class Employee {
     private Long eUserNo;
 
     @JsonIgnore
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idNo;
 
     @Column(length = 20)
