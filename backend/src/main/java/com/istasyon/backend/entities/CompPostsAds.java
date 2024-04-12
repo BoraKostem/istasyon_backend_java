@@ -1,6 +1,7 @@
 package com.istasyon.backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.istasyon.backend.entities.enumeration.Currency;
 import com.istasyon.backend.entities.enumeration.JobType;
 import com.istasyon.backend.entities.enumeration.Status;
@@ -62,6 +63,26 @@ public class CompPostsAds {
     private Company company;
 
     // Getters and setters...
+    @JsonProperty("CompanyName")
+    public String getCompanyName() {
+        return company.getCompanyName();
+    }
+    @JsonProperty("CompanySector")
+    public String getCompanySector() {
+        return company.getSector();
+    }
+    @JsonProperty("CompanyAddress")
+    public String getCompanyAddress() {
+        return company.getAddress();
+    }
+    @JsonProperty("CompanyPhone")
+    public String getCompanyPhone() {
+        return company.getPhoneNo();
+    }
+    @JsonProperty("CompanyId")
+    public Long getCompanyId() {
+        return company.getcUserNo();
+    }
 
     public Long getAdId() {
         return adId;

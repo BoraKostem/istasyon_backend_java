@@ -8,6 +8,7 @@ import com.istasyon.backend.repositories.CompanyRepo;
 import com.istasyon.backend.repositories.EmployeeRepo;
 import com.istasyon.backend.repositories.JobAddRepo;
 import com.istasyon.backend.services.GoogleMapsService;
+import com.istasyon.backend.services.RecommendationService;
 import com.istasyon.backend.utilities.CustomJson;
 import com.istasyon.backend.utilities.JsonCreator;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.springframework.security.authorization.AuthorityAuthorizationManager.hasRole;
 
@@ -30,11 +33,13 @@ public class JobController {
     private final JobAddRepo jobAddRepo;
     private final EmployeeRepo employeeRepo;
     private final GoogleMapsService googleMapsService;
-    public JobController(JsonCreator jsonCreator, JobAddRepo jobAddRepo, EmployeeRepo employeeRepo, GoogleMapsService googleMapsService) {
+    private final RecommendationService recommendationService;
+    public JobController(JsonCreator jsonCreator, JobAddRepo jobAddRepo, EmployeeRepo employeeRepo, GoogleMapsService googleMapsService, RecommendationService recommendationService) {
         this.jsonCreator = jsonCreator;
         this.jobAddRepo = jobAddRepo;
         this.employeeRepo = employeeRepo;
         this.googleMapsService = googleMapsService;
+        this.recommendationService = recommendationService;
     }
     @GetMapping("/view")
     public ResponseEntity<CustomJson<Object>> viewJob(@RequestParam(required = false) Long id) {
@@ -73,8 +78,19 @@ public class JobController {
         if(offset == null){
             offset = 0;
         }
-        //Add AI job recommendation here
-
-        return jsonCreator.create(response, 200);
+        try {
+            //todo view countu arttır herbiri için
+            Long[] recommendations;
+            try {
+                recommendations = recommendationService.getRecommendations(currentUser.getUserId(), size, offset);
+            }catch (Exception e){
+                return jsonCreator.create("An error occurred in recommendation: " + e, 500);
+            }
+            List<CompPostsAds> jobAdds = jobAddRepo.findByadIdIn(Arrays.stream(recommendations).toList());
+            response.put("JobAdd", jobAdds);
+            return jsonCreator.create(response, 200);
+        } catch (Exception e) {
+            return jsonCreator.create("An error occurred: " + e, 500);
+        }
     }
 }
