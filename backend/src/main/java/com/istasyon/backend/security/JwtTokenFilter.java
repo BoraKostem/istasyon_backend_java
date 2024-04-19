@@ -3,6 +3,7 @@ package com.istasyon.backend.security;
 import com.istasyon.backend.entities.User;
 import com.istasyon.backend.services.UserService;
 import com.istasyon.backend.utilities.TokenUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -44,24 +45,35 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
         jwt = cookie.get().getValue();
-        String email = tokenUtil.getEmail(jwt);
-        if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            CustomUserDetails userDetails = userService.loadUserByUsername(email);
-            if(tokenUtil.validateToken(jwt, userDetails)){
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities());
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-                logger.error("Token is valid" + authToken);
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-                logger.info(SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString());
+        try {
+            String email = tokenUtil.getEmail(jwt);
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                CustomUserDetails userDetails = userService.loadUserByUsername(email);
+                if (tokenUtil.validateToken(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
+                    logger.error("Token is valid" + authToken);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    logger.info(SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString());
+                } else {
+                    logger.error("Token is not valid");
+                }
             }
-            else{
-                logger.error("Token is not valid");
-            }
+        } catch (ExpiredJwtException e) {
+            Cookie jwtCookie = new Cookie(cookieName, null);
+            jwtCookie.setMaxAge(0);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setPath("/");
+            response.addCookie(jwtCookie);
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("JWT has expired. Please log in again or refresh the token.");
+            return;
         }
         filterChain.doFilter(request, response);
     }
