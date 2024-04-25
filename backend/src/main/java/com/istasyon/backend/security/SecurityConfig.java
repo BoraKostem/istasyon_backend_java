@@ -15,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
@@ -44,7 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(antMatcher(HttpMethod.POST,"/login"),antMatcher(HttpMethod.POST,"/user/register"),antMatcher(HttpMethod.POST,"/company/register"),antMatcher("/404"),antMatcher("/login")).permitAll()
                         .anyRequest().authenticated()
                 );
-        http.cors(AbstractHttpConfigurer::disable)
+        http.cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()))
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
