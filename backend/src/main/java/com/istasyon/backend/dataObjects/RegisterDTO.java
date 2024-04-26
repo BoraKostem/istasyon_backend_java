@@ -22,10 +22,10 @@ public class RegisterDTO {
     private LocalDate birthDate;
     private String salaryExpectation = "-";
     private String eduLvl = "-";
+    private String skills = "";
     private String militaryServiceInfo = "NULL";
     private Boolean driversLicence = false;
 
-    private String skills = "";
 
     public String getName() {
         return name;
