@@ -56,7 +56,7 @@ public class TokenUtil {
     public Cookie encodeCookie(CustomUserDetails user) {
         String token = generateToken(Map.of(), user);
         Cookie cookie = new Cookie(cookieName, token);
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(false);
         cookie.setMaxAge(1000 * 60 * 60 * 10);
         return cookie;
     }

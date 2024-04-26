@@ -67,7 +67,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) {
             Cookie jwtCookie = new Cookie(cookieName, null);
             jwtCookie.setMaxAge(0);
-            jwtCookie.setHttpOnly(true);
+            jwtCookie.setHttpOnly(false);
             jwtCookie.setPath("/");
             response.addCookie(jwtCookie);
 
