@@ -45,8 +45,10 @@ public class SecurityConfig {
                         .requestMatchers(antMatcher(HttpMethod.POST,"/login"),antMatcher(HttpMethod.POST,"/user/register"),antMatcher(HttpMethod.POST,"/company/register"),antMatcher("/404"),antMatcher("/login")).permitAll()
                         .anyRequest().authenticated()
                 );
-        http.cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()))
+        http.cors(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
+
+// cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
