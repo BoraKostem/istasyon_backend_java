@@ -25,7 +25,7 @@ public class RegisterDTO {
     private String skills = "";
     private String militaryServiceInfo = "NULL";
     private Boolean driversLicence = false;
-
+    private String jobName = "";
 
     public String getName() {
         return name;
@@ -162,5 +162,13 @@ public class RegisterDTO {
 
     public void setSkills(String skills) {
         this.skills = skills;
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
     }
 }

@@ -85,6 +85,7 @@ public class RegisterController {
         employee.setEduLvl(employeeDTO.getEduLvl());
         employee.setSalaryExpectation(employeeDTO.getSalaryExpectation());
         employee.setSkills(employeeDTO.getSkills());
+        employee.setJobName(employeeDTO.getJobName());
         return employee;
     }
 

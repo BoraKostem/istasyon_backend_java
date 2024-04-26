@@ -72,6 +72,9 @@ public class Employee {
     @JsonIgnore
     @Column(name = "start_date")
     private LocalDate startDate;
+    @JsonIgnore
+    @Column(name = "job_name")
+    private String jobName;
 
     @Column(name = "skills")
     private String skills;
@@ -259,5 +262,13 @@ public class Employee {
 
     public void setSkills(String skills) {
         this.skills = skills;
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
     }
 }
