@@ -28,4 +28,15 @@ public class AWSS3Service {
         String fileUrl = "https://" + bucketName + ".s3.amazonaws.com/" + fileName;
         return fileUrl;
     }
+
+    public String createFolder(String folderName) {
+        String folderKey = "companies/" + folderName + "/";
+        s3Client.putObject(PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(folderKey)
+                        .build(),
+                RequestBody.fromBytes(new byte[0]));
+        String folderUrl = "https://" + bucketName + ".s3.amazonaws.com/" + folderKey;
+        return folderUrl;
+    }
 }

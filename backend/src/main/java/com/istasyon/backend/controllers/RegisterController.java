@@ -3,14 +3,9 @@ package com.istasyon.backend.controllers;
 import com.istasyon.backend.dataObjects.CompanyRegisterDTO;
 import com.istasyon.backend.dataObjects.RegisterDTO;
 import com.istasyon.backend.dataObjects.UserDTO;
-import com.istasyon.backend.entities.Company;
-import com.istasyon.backend.entities.Employee;
-import com.istasyon.backend.entities.EmployeeProfile;
-import com.istasyon.backend.entities.User;
-import com.istasyon.backend.repositories.CompanyRepo;
-import com.istasyon.backend.repositories.EmployeeProfileRepo;
-import com.istasyon.backend.repositories.EmployeeRepo;
-import com.istasyon.backend.repositories.UserRepo;
+import com.istasyon.backend.entities.*;
+import com.istasyon.backend.repositories.*;
+import com.istasyon.backend.services.AWSS3Service;
 import com.istasyon.backend.utilities.CustomJson;
 import com.istasyon.backend.utilities.JsonCreator;
 import org.springframework.http.ResponseEntity;
@@ -28,15 +23,19 @@ public class RegisterController {
     private final EmployeeRepo employeeRepository;
     private final EmployeeProfileRepo employeeProfileRepo;
     private final CompanyRepo companyRepository;
+    private final CompanyProfileRepo companyProfileRepo;
+    private final AWSS3Service awss3Service;
     private final JsonCreator jsonCreator;
     private final BCryptPasswordEncoder passwordEncoder;
-    public RegisterController(UserRepo userRepository, EmployeeRepo employeeRepository, EmployeeProfileRepo employeeProfileRepo, CompanyRepo companyRepository, JsonCreator jsonCreator, BCryptPasswordEncoder passwordEncoder) {
+    public RegisterController(UserRepo userRepository, EmployeeRepo employeeRepository, EmployeeProfileRepo employeeProfileRepo, CompanyRepo companyRepository, JsonCreator jsonCreator, BCryptPasswordEncoder passwordEncoder, AWSS3Service awss3Service, CompanyProfileRepo companyProfileRepo) {
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
         this.companyRepository = companyRepository;
         this.jsonCreator = jsonCreator;
         this.passwordEncoder = passwordEncoder;
         this.employeeProfileRepo = employeeProfileRepo;
+        this.awss3Service = awss3Service;
+        this.companyProfileRepo = companyProfileRepo;
     }
 
     @PostMapping("/user/register")
@@ -104,7 +103,11 @@ public class RegisterController {
 
             Company company = getCompany(companyDTO, user);
             try {
-                companyRepository.save(company);
+                companyRepository.saveAndFlush(company);
+                CompanyProfile companyProfile = new CompanyProfile();
+                companyProfile.setCompany(company);
+                companyProfile.setS3BucketUrl(awss3Service.createFolder(company.getcUserNo()+""));
+                companyProfileRepo.save(companyProfile);
             } catch (Exception e) {
                 userRepository.delete(user);
                 return jsonCreator.create(new HashMap<String, String>() {{

@@ -24,6 +24,10 @@ public class EmployeePrevJobs {
     private Long companyId;
     @Column
     private String companyName;
+    @Column(name = "role")
+    private String role;
+    @Column(name = "job_description")
+    private String jobDescription;
     @Column
     private LocalDate startDate;
     @Column
@@ -200,5 +204,21 @@ public class EmployeePrevJobs {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getJobDescription() {
+        return jobDescription;
+    }
+
+    public void setJobDescription(String jobDescription) {
+        this.jobDescription = jobDescription;
     }
 }

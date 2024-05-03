@@ -2,9 +2,6 @@ package com.istasyon.backend.entities;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "EmployeeProfile")
 public class EmployeeProfile {
