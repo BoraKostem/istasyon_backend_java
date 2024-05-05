@@ -46,13 +46,13 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(antMatcher(HttpMethod.POST,"/login"),antMatcher(HttpMethod.POST,"/user/register"),antMatcher(HttpMethod.POST,"/company/register"),antMatcher("/404"),antMatcher("/login")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.POST,"/login"),antMatcher(HttpMethod.POST,"/user/register"),antMatcher(HttpMethod.POST,"/company/register"),antMatcher("/404"),antMatcher("/login"),antMatcher(HttpMethod.OPTIONS)).permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         //http.cors(AbstractHttpConfigurer::disable)
         //        .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+        http.cors().configurationSource(corsConfigurationSource());
         return http.build();
     }
 
