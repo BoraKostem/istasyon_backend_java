@@ -16,7 +16,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
@@ -24,11 +30,9 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    private final JwtTokenFilter jwtTokenFilter;//= new JwtTokenFilter();
-    private final DynamicCorsFilter dynamicCorsFilter;
-    public SecurityConfig(JwtTokenFilter jwtTokenFilter, DynamicCorsFilter dynamicCorsFilter) {
+    private final JwtTokenFilter jwtTokenFilter;
+    public SecurityConfig(JwtTokenFilter jwtTokenFilter) {
         this.jwtTokenFilter = jwtTokenFilter;
-        this.dynamicCorsFilter = dynamicCorsFilter;
     }
 
 
@@ -44,11 +48,24 @@ public class SecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers(antMatcher(HttpMethod.POST,"/login"),antMatcher(HttpMethod.POST,"/user/register"),antMatcher(HttpMethod.POST,"/company/register"),antMatcher("/404"),antMatcher("/login")).permitAll()
                         .anyRequest().authenticated()
-                );
-        http.cors(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                ).addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        //http.cors(AbstractHttpConfigurer::disable)
+        //        .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         return http.build();
     }
-}
 
-// cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        List<String> allowOrigins = Arrays.asList("*");
+        configuration.setAllowedOriginPatterns(allowOrigins);
+        configuration.setAllowedMethods(singletonList("*"));
+        configuration.setAllowedHeaders(singletonList("*"));
+        //in case authentication is enabled this flag MUST be set, otherwise CORS requests will fail
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+}
