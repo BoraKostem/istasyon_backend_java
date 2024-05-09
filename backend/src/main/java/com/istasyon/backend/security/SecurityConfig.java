@@ -49,23 +49,22 @@ public class SecurityConfig {
                         .requestMatchers(antMatcher(HttpMethod.POST,"/login"),antMatcher(HttpMethod.POST,"/user/register"),antMatcher(HttpMethod.POST,"/company/register"),antMatcher("/404"),antMatcher("/login"),antMatcher(HttpMethod.OPTIONS)).permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-        //http.cors(AbstractHttpConfigurer::disable)
-        //        .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.cors(AbstractHttpConfigurer::disable);
 
-        http.cors().configurationSource(corsConfigurationSource());
+        //http.cors().configurationSource(corsConfigurationSource());
         return http.build();
     }
 
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        List<String> allowOrigins = Arrays.asList("*");
-        configuration.setAllowedOriginPatterns(allowOrigins);
-        configuration.setAllowedMethods(singletonList("*"));
-        configuration.setAllowedHeaders(singletonList("*"));
+    //CorsConfigurationSource corsConfigurationSource() {
+    //    CorsConfiguration configuration = new CorsConfiguration();
+    //    List<String> allowOrigins = Arrays.asList("*");
+    //    configuration.setAllowedOriginPatterns(allowOrigins);
+    //    configuration.setAllowedMethods(singletonList("*"));
+    //    configuration.setAllowedHeaders(singletonList("*"));
         //in case authentication is enabled this flag MUST be set, otherwise CORS requests will fail
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+    //    configuration.setAllowCredentials(true);
+    //    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    //    source.registerCorsConfiguration("/**", configuration);
+    //    return source;
+    //}
 }
