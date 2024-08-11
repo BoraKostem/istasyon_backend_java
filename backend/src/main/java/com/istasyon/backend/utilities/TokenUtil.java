@@ -57,6 +57,8 @@ public class TokenUtil {
         String token = generateToken(Map.of(), user);
         Cookie cookie = new Cookie(cookieName, token);
         cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setAttribute("SameSite","None");
         cookie.setMaxAge(1000 * 60 * 60 * 10);
         return cookie;
     }
